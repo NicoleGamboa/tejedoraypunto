@@ -15,13 +15,12 @@ const migrate = async () => {
             encoding: "utf-8",
         });
         await pool.query(data);
-        console.log("tabla creada");
     } catch (error) {
         console.log(error);
     }
 };
 
-migrate().then(console.log)
+migrate().then()
 
 
 module.exports = pool

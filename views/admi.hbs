@@ -1,0 +1,145 @@
+<body>
+    <div id="AgregarCurso">
+      <h2 class="pt-3">Agregar productos</h2>
+
+      <form action="/curso" method="post">
+        <div class="container pt-5 w-50">
+          <div>
+            <div class="form-group row">
+              <label for="name" class="col-sm-2 col-form-label">Productos</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="producto"
+                  name="producto"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="email" class="col-sm-2 col-form-label">Descripcion</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="descripcion"
+                  name="descripcion"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="rut" class="col-sm-2 col-form-label">Stock</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="stock"
+                  name="stock"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="edad" class="col-sm-2 col-form-label">Valor</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="valor"
+                  name="valor"
+                />
+              </div>
+            </div>
+  
+            <button
+            type="submit"
+              onclick="nuevoCurso()"
+              id="agregar"
+              class="m-auto btn btn-success"
+            >
+              Agregar
+            </button>
+            <button
+              onclick="editarCurso()"
+              id="editar"
+              class="m-auto btn btn-warning"
+            >
+              Editar
+            </button>
+          </div>
+        </div>
+      </form>
+
+
+    </div>
+    <div id="ListaCursos">
+      <hr />
+      <hr />
+      <h2>Tabla de productos</h2>
+
+      <div class="container pt-5 w-75">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Productos</th>
+              <th scope="col">Descripcion</th>
+              <th scope="col">Stock</th>
+              <th scope="col">Valor</th>
+              <th scope="col">-</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo"></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+  <style>
+  body {
+    text-align: center;
+  }
+</style>
+
+<script>
+  let url = "http://localhost:3000/api/productos";
+  let tbody = document.getElementById("cuerpo");
+  let nombre = document.getElementById("nombre");
+  let nivelTecnico = document.getElementById("nivelTecnico");
+  let fechaInicio = document.getElementById("fechaInicio");
+  let duracion = document.getElementById("duracion");
+
+  let productos = [];
+  window.onload = getData();
+
+  async function getData() {
+    await axios.get(url)
+    .then((data) => {
+      productos = data.data.msg;
+      console.log(productos)
+    
+      tbody.innerHTML = "";
+      productos.forEach((c, i) => {
+      //  
+        tbody.innerHTML += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${c.producto}</td>
+          <td>${c.descripcion}</td>
+          <td>${c.stock}</td>
+          <td>${c.valor}</td>
+          <td>
+            <button class="btn btn-warning" onclick="prepararCurso(${i},'${
+          c.id
+        }')">Editar</button>
+            <button class="btn btn-danger" onclick="eliminarCurso(${i},'${
+          c.id
+        }')">Eliminar</button>
+          </td>
+        </tr>
+      `;
+      });
+    });
+
+  }
+ 
+</script>
