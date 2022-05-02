@@ -1,21 +1,70 @@
-<div id="carouselExampleControls" class="carousel slide w-50" data-bs-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="/img/img1.jpeg" class="d-block w-100" alt="...">
+{{!-- card  --}}
+
+<div class="container">
+    <div class="py-5">
+
+      <hr class="w-100" />
+      <div class="row" id="items"></div>
+        
     </div>
-    <div class="carousel-item">
-      <img src="/img/img2.jpeg" class="d-block w-100" alt="...">
-    </div>
-    <div class="carousel-item">
-      <img src="/img/img3.jpeg" class="d-block w-100" alt="...">
-    </div>
-  </div>
-  <button class="carousel-control-prev bg-ligth" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next bg-ligth" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
 </div>
+
+
+{{!-- TEMPLATE DINAMICO --}}
+
+<template id="template-card">
+
+<div class="col-12 col-md-4 ">
+        <div class="card m-2" >
+            <img src="" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h4 >producto</h4>
+            </div>
+        </div>
+</div>
+
+</template>
+
+<style>
+  h4{
+    color:#F98496;
+  }
+</style>
+
+<script>
+
+const items = document.getElementById("items");
+const templateCard = document.getElementById("template-card").content;
+const fragment = document.createDocumentFragment()
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetchData()
+})
+
+const fetchData = async() => {
+    try{
+        const respuesta =  await fetch("/api/inicio", {
+            method: "get",
+        })
+        const data = await respuesta.json()
+        pintarCards(data.msg)
+    }catch(error){
+        console.log(error)
+    }
+}
+
+const pintarCards = (data) => {
+        //console.log(data)
+        data.forEach(producto => {
+            templateCard.querySelector("h4").textContent = producto.producto
+            templateCard.querySelector("img").setAttribute("src", `/img/${producto.producto.split(" ", 2)[1]}2.jpeg`)
+
+            const clone = templateCard.cloneNode(true)
+            fragment.appendChild(clone)
+        })
+        items.appendChild(fragment)
+}
+
+
+</script>

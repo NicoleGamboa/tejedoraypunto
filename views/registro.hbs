@@ -1,8 +1,4 @@
-<body>
-     
-    <h1></h1>
-
-    <div class="py-4">
+<div class="py-5">
       <h2>Registro</h2>
       <hr class="w-100" />
 
@@ -31,15 +27,12 @@
         </div>
         <p id="errorRegistro" ></p>
         <button type="submit" class="btn btn-warning mb-3">Registrarme</button>
-        <p><a href="http://localhost:3000/login"> Iniciar sesión</a></p>
+        <p><a href="/login"> Iniciar sesión</a></p>
       </form>
-    </div>
-
- </body>    
+    </div >
 
 
-
-     <script>
+<script>
 
      const registroForm = document.getElementById("registroForm");
 
@@ -47,38 +40,45 @@
      const errorRegistro = document.getElementById("errorRegistro");
           e.preventDefault()
           const dataForm = new FormData(registroForm)
-          const data = Object.fromEntries(dataForm);  
+          const data = Object.fromEntries(dataForm); 
+          const obj = JSON.stringify(data)
+
           
           if(data.password !== data.passwordConfirm){
-          return errorRegistro.innerHTML = "Las contraseñas no coinciden";
+          return errorRegistro.innerHTML = `
+        <div class="container" >
+          <div class="alert alert-danger container mt-3" role="alert">
+            <p> Las contraseñas no coinciden </p>
+          </div>
+        </div>`
           }
 
           try{
-            const res = await fetch('/api/create', {
+            const res = await fetch('/api/createUser', {
                 method: 'post',
-                body: JSON.stringify(dataForm),
+                body: obj,
                 headers:{
                     'Content-Type': 'application/json'
                 }
           })
         const datos = await res.json()
-    console.log(datos)
-        if(!data.ok){
-        return errorRegistro.innerHTML = data.msg
+
+        if(!datos.ok){
+        return errorRegistro.innerHTML = `
+      <div class="container" >
+        <div class="alert alert-danger container mt-3" role="alert">
+            <p>${datos.msg}</p>
+        </div>
+      </div>
+        `
+
         }
-      errorRegistro.innerHTML = "Usuario registrado, seras dirigido al login para ingresar"
+        return window.location.href = "/login";
 
-      setTimeout(function(){
-                window.location.href = "/login";
-            },5000);
-
-
-        console.log(data)
           }catch(error){
-              console.log(error)
+            console.log(error)
           }
       })
           
   </script>
-
  

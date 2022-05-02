@@ -1,0 +1,53 @@
+<footer class="text-center footer-style">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 footer-col">
+                <h3>Contacto</h3>
+                <p>
+                    Tejedoraypunto@hotmail.com
+                </p>
+            </div>
+            <div class="col-md-4 footer-col">
+                <h3>Siguenos</h3>
+                <ul class="list-inline">
+                    <li>
+                        <a href="https://www.facebook.com/Tejedoraypunto-103340571548384/" ><i class="fa-brands fa-facebook"></i></a>
+                    </li>
+                    <li>
+                        <a href="https://www.instagram.com/tejedoraypunto/"><i class="fa-brands fa-instagram"></i></a>
+                    </li>
+               </ul>
+            </div>
+            <div class="col-md-4 footer-col">
+                <h3> Nosotras </h3>
+                <p> La idea principal de tejedora y punto es tener un chaleco unico y tejido a mano</p>
+            </div>
+            <div class="container mt-1">
+    <p id="desactivar"></p></div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const desactivar = document.getElementById("desactivar")
+
+   document.addEventListener("DOMContentLoaded", () => {
+   if(!localStorage.getItem('token')){
+       desactivar.innerHTML = "";
+   }
+   if(localStorage.getItem('token')){
+       desactivar.innerHTML = `
+        <button class="btn btn-dark" onclick="cerrarSesion()">Cerrar Sesion</button>
+       `
+   }
+   })
+
+const cerrarSesion = () => {
+     localStorage.removeItem('token')
+     localStorage.removeItem('carrito')
+     window.location.href = "/"
+}
+
+
+
+</script>

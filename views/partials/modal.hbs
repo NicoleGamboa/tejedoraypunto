@@ -1,0 +1,67 @@
+<div class="modal fade col-12" id="modalUno" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Tus productos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body ">
+          <table class="table">
+              <thead>
+                  <tr>  
+                      <th scope="col">Producto/s</th>
+                      <th scope="col">Cantidad</th>
+                      <th scope="col">Total</th>
+                  </tr>
+              </thead>
+              <tbody id="items"></tbody>
+              <tfoot>
+                  <tr id="footer">
+                    <th scope="row" colspan="5"><h4> No tienes productos en tu carrito</h4></th>
+                  </tr>
+              </tfoot>
+          </table>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button  id="pedido" type="button" class="btn btn-dark">Terminar Pedido</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<template id="template-carrito">
+    <tr>
+        <td>producto</td>
+        <td>cantidad</td>
+        <td>$<span>500</span></td>
+    </tr>
+</template>
+
+<template id="template-footer">
+    <th scope="row" colspan="1">Total Productos</th>
+    <td>cantidad</td>
+    <td class="font-weight-bold">$<span>5000</span></td>
+    <td>
+        <button class="btn btn-danger btn-sm" id="vaciar-carrito">
+            Vaciar todo
+        </button>
+    </td>
+</template>
+
+
+
+<script>
+
+const pedido = document.getElementById("pedido")
+
+pedido.addEventListener("click", (e) => {
+  e.preventDefault()
+  window.location.href = "/pedido"
+})
+
+  
+</script>

@@ -1,0 +1,210 @@
+<div class="container mt-5">
+    <div class="row">
+            <h2 class="text-center">Tu detalle</h2>
+            <hr class="w-100" ><hr class="w-100" >
+<div class="col-md-6 col-sm-12">
+    <div class="card text-dark bg-light mb-3">
+    <div class="card-header">Info pedido</div>
+        <div class="card-body">
+            <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Producto/s</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalle"></tbody>
+                    <tfoot>
+                        <tr id="footer">    
+                        </tr>
+                    </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6 col-sm-12">
+    <div class="card text-dark bg-light mb-3">
+        <div class="card-header">Info del cliente</div>
+        <div class="card-body">
+            <h5 id="infoUsuario"></h5>
+        </div>
+    </div>
+</div>
+    
+</div >
+<form id="form">
+    <p id="alert"></p>
+   <p id="botton"></p>
+
+</form>
+</div>
+
+{{!-- template card info pedido --}}
+<template id="template-pedido">
+    <tr>
+        <td scope="row" >producto</td>
+        <td>precio</td>
+        <td>cantidad</td>
+        <td>$<span>Total</span></td>
+        {{!-- <button  id="enviar" type="button" class="btn btn-dark ">Enviar Pedido</button> --}}
+    </tr>
+</template>
+{{!-- template total compra --}}
+<template id="template-total">
+    <th scope="row" colspan="2">Total Productos</th>
+    <td>cantidad</td>
+    <td class="font-weight-bold">$<span>5000</span></td>
+</template>
+
+{{!-- template informacion usuario --}}
+<template id="template-usuario">
+            <h5>ID : <span></span></h5>
+            <h5>Nombre : <span></span></h5>
+            <h5>Apellido : <span></span></h5>
+            <h5>Email : <span></span></h5>
+</template>
+
+
+
+<script>
+    const fragment = document.createDocumentFragment()
+    const templatePedido = document.getElementById("template-pedido").content;
+    const templateTotal = document.getElementById("template-total").content;
+    const templateUsuario = document.getElementById("template-usuario").content;
+    const footer = document.getElementById("footer")
+    const detalle = document.getElementById("detalle")
+    const infoUsuario = document.getElementById("infoUsuario")
+    const boton = document.getElementById("botton")
+    const form = document.getElementById("form")
+    const alert = document.getElementById("alert")
+    let carrito = {}
+
+
+if(localStorage.getItem("carrito")){
+   carrito = JSON.parse(localStorage.getItem('carrito')) //traer info del carrito alojada en el localstorage
+}
+
+const pintarPedido = () => {
+    detalle.innerHTML= "";
+    Object.values(carrito).forEach(p => {  //object.values devuelve un array lo que era un objeto 
+        templatePedido.querySelectorAll("td")[0].textContent = p.producto
+        templatePedido.querySelectorAll("td")[1].textContent = p.valor
+        templatePedido.querySelectorAll("td")[2].textContent = p.cantidad
+        templatePedido.querySelectorAll("td")[3].textContent = `$${p.cantidad * p.valor}`
+    
+    const clone = templatePedido.cloneNode(true)
+    fragment.appendChild(clone)
+    })
+    detalle.appendChild(fragment)
+    if(localStorage.getItem("carrito").length > 2 ){
+        boton.innerHTML = `
+     <button class="btn btn-dark" type="submit" >Enviar orden de compra</button> `
+    }
+}
+
+const pintarTotal = () => {
+    footer.innerHTML = "";
+    if(localStorage.getItem("carrito").length == 2 ){  //carrito es un objeto  si esta vacio {} length = 2
+       footer.innerHTML = `
+        <th scope="row" colspan="3"><h4>No tienes productos en tu carrito</h4></th>
+        `
+    }
+    
+    const nCantidad = Object.values(carrito).reduce((acc,{cantidad}) => acc + cantidad,0)
+    const nValor = Object.values(carrito).reduce((acc,{cantidad, valor}) => acc + cantidad * valor,0)
+    
+    templateTotal.querySelectorAll("td")[0].textContent = nCantidad
+    templateTotal.querySelector("span").textContent = nValor
+
+    const clone = templateTotal.cloneNode(true)
+    fragment.appendChild(clone)
+    footer.append(fragment)
+
+    
+}
+
+const pintarUsuario = (data) => {
+
+    infoUsuario.innerHTML= ""; 
+        templateUsuario.querySelectorAll("span")[0].textContent = data.id
+        templateUsuario.querySelectorAll("span")[1].textContent = data.nombre
+        templateUsuario.querySelectorAll("span")[2].textContent = data.apellido
+        templateUsuario.querySelectorAll("span")[3].textContent = data.email
+
+    const clone = templateUsuario.cloneNode(true)
+    fragment.appendChild(clone)
+    infoUsuario.appendChild(fragment)
+
+
+}
+
+const enviarPedido = async(info) => {
+    const newinfo = JSON.stringify(info)
+    const newcarrito = JSON.stringify(carrito)
+    const body = JSON.stringify([newcarrito, newinfo])
+    try{
+    const res = await fetch("/api/correo", {
+      method : 'post',
+      body,
+       headers:{
+                    'Content-Type': 'application/json'
+                }
+    })
+    const data = await res.json()
+    if(data.ok){
+        alert.innerHTML = `
+        <div class="container" >
+            <div class="alert alert-danger container mt-3" role="alert">
+                <p>Hemos recibido tu orden!</p>
+                <p>Te enviamos un e-mail con las intrucciones para que puedas finalizar la compra.</p>
+                
+                <p>Recuerda revisar tu bandeja de SPAM </p> 
+            </div>
+      </div>
+        `
+    }
+  }catch(error){
+      console.log(error)
+  }
+
+
+}
+
+
+const validacion = async() => {
+  try{
+    const res = await fetch("/api/usuario", {
+      method : 'get',
+      headers : {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    const data = await res.json()
+     pintarUsuario(data.msg)
+
+    form.addEventListener("submit" , (e) => {
+        e.preventDefault()
+        enviarPedido(data.msg)
+            
+  } )
+
+  }catch(error){
+      console.log(error)
+  }
+}
+
+
+
+
+validacion()
+pintarPedido()
+pintarTotal()
+
+
+
+
+
+</script>

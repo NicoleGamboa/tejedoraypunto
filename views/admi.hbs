@@ -1,23 +1,34 @@
-<body>
-    <div id="AgregarCurso">
-      <h2 class="pt-3">Agregar productos</h2>
-
-      <form action="/curso" method="post">
-        <div class="container pt-5 w-50">
+<div id="AgregarCurso py-5">
+      <div id="info">
+          <h2 class="pt-5">Agregar Producto</h2>
+      <hr class="w-100" />
+      <hr class="w-100" />
+      <form id="crearProducto">
+        <div class="container pt-3 w-50">
           <div>
             <div class="form-group row">
-              <label for="name" class="col-sm-2 col-form-label">Productos</label>
+              <label  class="col-sm-2 col-form-label">Producto</label>
               <div class="col-sm-10">
                 <input
                   type="text"
                   class="form-control"
-                  id="producto"
+                  id="nombre"
                   name="producto"
                 />
               </div>
             </div>
+
+
+             {{!-- <div class="form-group row">
+            <label class="col-sm-2 col-form-label" >Imagen</label>
+            <div class="col-sm-10">
+              <input  class="form-control" type="file" name="foto"/>
+            </div>
+          </div> --}}
+
+
             <div class="form-group row">
-              <label for="email" class="col-sm-2 col-form-label">Descripcion</label>
+              <label  class="col-sm-2 col-form-label">Descripcion</label>
               <div class="col-sm-10">
                 <input
                   type="text"
@@ -28,10 +39,10 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="rut" class="col-sm-2 col-form-label">Stock</label>
+              <label class="col-sm-2 col-form-label">Stock</label>
               <div class="col-sm-10">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   id="stock"
                   name="stock"
@@ -39,10 +50,10 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="edad" class="col-sm-2 col-form-label">Valor</label>
+              <label  class="col-sm-2 col-form-label">Valor</label>
               <div class="col-sm-10">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   id="valor"
                   name="valor"
@@ -52,16 +63,15 @@
   
             <button
             type="submit"
-              onclick="nuevoCurso()"
               id="agregar"
-              class="m-auto btn btn-success"
+              class="my-2 btn btn-success"
             >
               Agregar
             </button>
             <button
               onclick="editarCurso()"
               id="editar"
-              class="m-auto btn btn-warning"
+              class="my-2 btn btn-info"
             >
               Editar
             </button>
@@ -70,18 +80,22 @@
       </form>
 
 
-    </div>
+   
     <div id="ListaCursos">
       <hr />
+       <p id="alert" ></p>
       <hr />
       <h2>Tabla de productos</h2>
 
-      <div class="container pt-5 w-75">
-        <table class="table">
+     
+
+      <div class="container">
+       <div class="row" >
+          <div class="col-12">
+                  <table class="table">
           <thead class="thead-dark">
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Productos</th>
+              <th scope="col">Nombre</th>
               <th scope="col">Descripcion</th>
               <th scope="col">Stock</th>
               <th scope="col">Valor</th>
@@ -90,10 +104,15 @@
           </thead>
           <tbody id="cuerpo"></tbody>
         </table>
+        </div>
+       </div>
       </div>
+      </div>      
     </div>
+     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  </body>
+
   <style>
   body {
     text-align: center;
@@ -101,39 +120,76 @@
 </style>
 
 <script>
-  let url = "http://localhost:3000/api/productos";
+
   let tbody = document.getElementById("cuerpo");
-  let nombre = document.getElementById("nombre");
-  let nivelTecnico = document.getElementById("nivelTecnico");
-  let fechaInicio = document.getElementById("fechaInicio");
-  let duracion = document.getElementById("duracion");
+  let descripcion = document.getElementById("descripcion");
+  let stock = document.getElementById("stock");
+  let valor = document.getElementById("valor");
+  let form = document.getElementById("crearProducto")
+  const alert = document.getElementById("alert")
+  const info = document.getElementById("info")
 
-  let productos = [];
-  window.onload = getData();
+document.addEventListener("DOMContentLoaded", () => {
+  if(!localStorage.getItem('token')){
+      return  info.innerHTML = `
+         <hr class="w-100" />
+        <hr class="w-100" />
+        <h2>vista solo para administacion</h2>
+        <p><a href="/login"> Iniciar sesión</a></p>     
+        `
+        }
+        validacion()
+  });//document DOMJHFJ
 
-  async function getData() {
-    await axios.get(url)
+const validacion = async() => {
+  try{
+    const res = await fetch("/api/administacion", {
+      method : 'get',
+      headers : {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    const data = await res.json()
+      if(data.msg == 'administrador'){
+           let productos = [];
+          window.onload = getData();
+      }
+      if(data.msg == 'cliente'){
+          return  info.innerHTML = `
+        <hr class="w-100" />
+        <h2>No tienes acceso a la administracion</h2>
+         <hr class="w-100" />
+
+        `
+      }
+  }catch(error){
+      console.log(error)
+  }
+}
+
+
+const getData = async() => {
+    await axios.get("/api/productos",{
+      headers : {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
     .then((data) => {
       productos = data.data.msg;
-      console.log(productos)
+      //console.log(productos)
     
       tbody.innerHTML = "";
       productos.forEach((c, i) => {
       //  
         tbody.innerHTML += `
         <tr>
-          <td>${i + 1}</td>
           <td>${c.producto}</td>
           <td>${c.descripcion}</td>
           <td>${c.stock}</td>
           <td>${c.valor}</td>
           <td>
-            <button class="btn btn-warning" onclick="prepararCurso(${i},'${
-          c.id
-        }')">Editar</button>
-            <button class="btn btn-danger" onclick="eliminarCurso(${i},'${
-          c.id
-        }')">Eliminar</button>
+            <button class="btn btn-warning" onclick="prepararProducto(${i},'${c.id}')">Editar</button>
+            <button class="btn btn-danger" onclick="eliminarProducto(${i},'${c.id}')">Eliminar</button>
           </td>
         </tr>
       `;
@@ -142,4 +198,73 @@
 
   }
  
+form.addEventListener("submit", async(e) => {
+  e.preventDefault()
+  const dataForm = new FormData(form)
+  const data = Object.fromEntries(dataForm); 
+  const obj = JSON.stringify(data)
+  console.log(data)
+
+  try{
+            const res = await fetch('/api/agregarProducto', {
+                method: 'post',
+                body: obj,
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+          })
+        const data = await res.json()
+         console.log(data)
+        if(!data.ok){
+          alert.innerHTML = `
+           <div class="alert alert-warning container" role="alert">
+            ${data.msg}
+      </div>
+          `
+          setTimeout(function(){
+         alert.innerHTML = "";
+            },5000);
+        }
+          getData()
+  }catch(error){
+    console.log(error)
+    
+  }
+
+}) 
+
+
+  const eliminarProducto = (i, id) => {
+    const nombre = productos[i].producto
+    axios.delete("/api/eliminarProducto/" + id)
+    .then(() => {
+        alert.innerHTML = `
+      <div class="alert alert-danger container" role="alert">
+       ${nombre} ya fue eliminado
+      </div>
+      `
+      setTimeout(function(){
+         alert.innerHTML = "";
+            },5000);
+      getData();
+    });
+  }
+
+
+
+const prepararProducto = (i, id) => {
+    const elemento = productos[i]
+//crear value para los input
+    document
+      .getElementById("editar")
+      .setAttribute("onclick", `editarCurso('${id}')`);
+    document.getElementById("agregar").style.display = "none";
+    document.getElementById("editar").style.display = "block";
+  }
+
+
+
+//crear funcion editar curso 
+
+
 </script>

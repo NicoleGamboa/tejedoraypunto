@@ -1,6 +1,5 @@
-<h1></h1>
+<div class="py-5" >
 
-    <div class="py-5">
       <h2>Iniciar Sesión</h2>
       <hr class="w-100" />
 
@@ -8,7 +7,7 @@
         <div class="form-group">
           <div class="form-group">
             <label>Email</label>
-            <input type="email" class="form-control w-50 m-auto" name="email" />
+            <input type="email" class="form-control w-50 m-auto " name="email" />
           </div>
           <div class="form-group">
             <label>Password</label>
@@ -20,5 +19,51 @@
         <p>¿Aún no tienes cuenta? <a href="/registro">Regístrate</a></p>
       </form>
     </div>
+
+  
+
+ <script>
+     const formulario = document.getElementById('formulario')
+
+      formulario.addEventListener("submit", async(e) => {
+          e.preventDefault()
+          const dataForm = new FormData(formulario)
+          const data = Object.fromEntries(dataForm); 
+            console.log(data)
+          const obj = JSON.stringify(data)
+
+          try{
+            const res = await fetch('/api/login', {
+                method: 'post',
+                body: obj,
+                headers:{
+                  'Content-Type':"application/json"
+                }
+          })
+        const data = await res.json()
+        const errores = document.getElementById("errores")
+        if(!data.ok){
+       return errores.innerHTML = `
+      <div class="container" >
+        <div class="alert alert-danger container mt-3" role="alert">
+            <p>${data.msg}</p>
+        </div>
+      </div>
+        `
+        }
+         localStorage.setItem('token', data.token)
+        // return console.log("listo")
+         return window.location.href = "/productos"
+//consulta get para traer a usuario o trabajador y crear midleware 
+        
+
+        //console.log(data) true token
+          }catch(error){
+              console.log(error)
+          }
+      })
+     
+     
+  </script>
 
   

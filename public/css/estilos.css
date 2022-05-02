@@ -10,3 +10,11 @@ nav{
     background-color: #BB5365;
     width: 100%;
 }
+
+footer{
+    background-color: #BB5365;
+    color: #ffffff;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}

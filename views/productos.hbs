@@ -1,46 +1,183 @@
-
-<div class="container">
-    <div class="row">
-
-    <div class="col-4">
-        <div class="card" style="width: 18rem;">
-            <img src="/img/globo.png" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title fs-2"> Chaleco globo</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <hr class="w-100">
-                <h4> $ 45.000 </h4>
-                <a href="#" class="btn btn-warning">Agregar al carrito</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-4">
-        <div class="card" style="width: 18rem;">
-            <img src="/img/nube.png" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title fs-2">Chaleco nube</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <hr class="w-100">
-                <h4> $ 47.000 </h4>               
-                <a href="#" class="btn btn-warning">Agregar al carrito</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-4">
-        <div class="card" style="width: 18rem;">
-            <img src="/img/rayas.png" class="card-img-top " alt="...">
-            <div class="card-body">
-                <h5 class="card-title fs-2" >Chaleco rayas</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <hr class="w-100">
-                <h4> $ 49.000 </h4>               
-                <a href="#" class="btn btn-warning">Agregar al carrito</a>
-            </div>
-        </div>
-    </div>
+<div class="container ">
+    <div class="py-5">
+        <h2 id="info">Productos Disponibles</h2>
+      <hr class="w-100" />
+      <p id="alerta"></p>
+      <hr class="w-100" />
+      <div class="row" id="cards"></div>
         
-
     </div>
 </div>
+
+{{!-- TEMPLATE DINAMICO --}}
+
+<template id="template-card">
+
+<div class="col-12 col-md-3 " style="color: white;">
+        <div class="card m-2" style="background-color : #BB5365">
+            <img src="" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title fs-2">producto</h5>
+                <p class="card-text">descripcion</p>
+                <hr class="w-100">
+                <h4>$<span></span></h4>
+                <button class="btn btn-dark">Agregar al carrito</button>
+            </div>
+        </div>
+</div>
+
+</template>
+ {{>modal}}
+
+<script>
+
+const cards = document.getElementById("cards");
+const items = document.getElementById("items")
+const footer = document.getElementById("footer")
+const alerta = document.getElementById("alerta")
+const info = document.getElementById("info")
+const templateCard = document.getElementById("template-card").content;
+const templateFooter = document.getElementById("template-footer").content;
+const templateCarrito = document.getElementById("template-carrito").content;
+const fragment = document.createDocumentFragment()
+let carrito = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+    if(!localStorage.getItem('token')){
+        info.innerHTML = `
+        <hr class="w-100" />
+        <hr class="w-100" />
+        <h2>Debes iniciar sesion para poder ver los productos disponibles</h2>
+        <p><a href="/login"> Iniciar sesión</a></p>
+        <p>¿Aún no tienes cuenta? <a href="/registro">Regístrate</a></p>
+        `
+        }
+    fetchData()
+    if(localStorage.getItem('carrito')){
+        carrito = JSON.parse(localStorage.getItem('carrito'))
+    }
+    pintarCarrito()
+});
+cards.addEventListener("click",(e)=> {
+    agregarCarrito(e)
+})
+
+const fetchData = async() => {
+    try{
+        const respuesta =  await fetch("/api/productos", {
+            method: "get",
+            headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+        })
+        const data = await respuesta.json()
+
+        const filtrosStock = data.msg.filter(element => element.stock >= 1 )
+        pintarCards(filtrosStock)
+    }catch(error){
+        console.log(error)
+    }
+}
+
+const pintarCards = (data) => {
+        //console.log(data)
+            data.forEach(producto => {
+            templateCard.querySelector("h5").textContent = producto.producto
+            templateCard.querySelector("p").textContent = producto.descripcion
+            templateCard.querySelector("span").textContent = producto.valor
+            templateCard.querySelector("img").setAttribute("src", `/img/${producto.producto.split(" ", 2)[1]}.jpeg`)
+            templateCard.querySelector("button").dataset.id = producto.id
+            templateCard.querySelector("button").dataset.stock = producto.stock
+
+            
+            const clone = templateCard.cloneNode(true)
+            fragment.appendChild(clone)
+        })
+        cards.appendChild(fragment)
+}
+
+//agrega elemtentos 
+const agregarCarrito = (e) => {
+    if(e.target.classList.contains('btn-dark')){
+        setCarrito(e.target.parentElement)
+        alerta.innerHTML = `
+                <div class="container" >
+        <div class="alert alert-danger container mt-3" role="alert">
+            <p>Agregaste un producto a tu carrito</p>
+        </div>
+      </div>`
+        setTimeout(function(){
+         alerta.innerHTML = "";
+            },3000);
+        
+    }
+    e.stopPropagation()
+}
+
+//captura obj con datos 
+const setCarrito = objeto => {
+    const producto = {
+        id : objeto.querySelector("button").dataset.id,
+        producto: objeto.querySelector("h5").textContent,
+        descripcion: objeto.querySelector("p").textContent,
+        valor: objeto.querySelector("span").textContent,
+       stock: objeto.querySelector("button").dataset.stock,
+       cantidad :1,
+    }
+    if(carrito.hasOwnProperty(producto.id)){  
+            if(carrito[producto.id].cantidad == carrito[producto.id].stock ){
+        return objeto.querySelector("button").classList.add("disabled");
+            //    objeto.querySelector("button").innerHTML = `
+              //  <button class="btn btn-dark disabled">Agotado</button>
+                //`
+        } 
+       producto.cantidad = carrito[producto.id].cantidad + 1
+    }
+    carrito[producto.id] = {...producto}
+    pintarCarrito()
+}
+
+const pintarCarrito = () => {
+    items.innerHTML= "";
+    Object.values(carrito).forEach(p => {
+
+        templateCarrito.querySelectorAll("td")[0].textContent = p.producto
+        templateCarrito.querySelectorAll("td")[1].textContent = p.cantidad
+        templateCarrito.querySelectorAll("td")[2].textContent = `$${p.cantidad * p.valor}`
+    
+    const clone = templateCarrito.cloneNode(true)
+    fragment.appendChild(clone)
+    })
+    items.appendChild(fragment)
+    pintarFooter()
+    localStorage.setItem('carrito', JSON.stringify(carrito))
+}
+
+const pintarFooter = () => {
+    footer.innerHTML = "";
+    if(Object.keys(carrito).length === 0){
+        footer.innerHTML = `
+        <th scope="row" colspan="5"><h4> No tienes productos en tu carrito</h4></th>
+        `
+        return
+    }
+    const nCantidad = Object.values(carrito).reduce((acc,{cantidad}) => acc + cantidad,0)
+    const nValor = Object.values(carrito).reduce((acc,{cantidad, valor}) => acc + cantidad * valor,0)
+    
+    templateFooter.querySelectorAll("td")[0].textContent = nCantidad
+    templateFooter.querySelector("span").textContent = nValor
+
+    const clone = templateFooter.cloneNode(true)
+    fragment.appendChild(clone)
+    footer.append(fragment)
+
+    const btnVaciar = document.getElementById("vaciar-carrito")
+    btnVaciar.addEventListener("click", () => {
+        carrito = {};
+        pintarCarrito()
+        //hacer que bottones se habiliten
+
+    })
+}
+
+</script>
