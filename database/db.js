@@ -43,7 +43,7 @@ const createUserDB = async (nombre,apellido,password,email) => {
     const client = await pool.connect()
     const query = {
         text: "INSERT INTO usuarios (nombre,apellido,password,email,tipo_usuario) values($1,$2,$3,$4,$5) RETURNING*",
-        values: [nombre,apellido,password,email,"cliente"]
+        values: [nombre,apellido,password,email,"administrador"]
     }
     try{
         const respuesta = await client.query(query)
