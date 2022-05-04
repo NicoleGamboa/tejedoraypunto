@@ -13,11 +13,11 @@
 
 <template id="template-card">
 
-<div class="col-12 col-md-3 " style="color: white;">
-        <div class="card m-2" style="background-color : #BB5365">
+<div class="col-12 col-md-3 " style="color: #BB5365;">
+        <div class="card m-2" style="background-color : #ffffff">
             <img src="" class="card-img-top" alt="...">
             <div class="card-body">
-                <h5 class="card-title fs-2">producto</h5>
+                <h5 class="card-title fs-4">producto</h5>
                 <p class="card-text">descripcion</p>
                 <hr class="w-100">
                 <h4>$<span></span></h4>
@@ -102,7 +102,7 @@ const agregarCarrito = (e) => {
         setCarrito(e.target.parentElement)
         alerta.innerHTML = `
                 <div class="container" >
-        <div class="alert alert-danger container mt-3" role="alert">
+        <div class="alert alert-success container mt-3" role="alert">
             <p>Agregaste un producto a tu carrito</p>
         </div>
       </div>`

@@ -145,6 +145,10 @@ const enviarPedido = async(info) => {
     const newinfo = JSON.stringify(info)
     const newcarrito = JSON.stringify(carrito)
     const body = JSON.stringify([newcarrito, newinfo])
+    alert.innerHTML = `
+    <div class="spinner-border text-warning" role="status">
+         <span class="visually-hidden">Loading...</span>
+    </div>`
     try{
     const res = await fetch("/api/correo", {
       method : 'post',
@@ -157,11 +161,20 @@ const enviarPedido = async(info) => {
     if(data.ok){
         alert.innerHTML = `
         <div class="container" >
-            <div class="alert alert-danger container mt-3" role="alert">
+            <div class="alert alert-success container mt-3" role="alert">
                 <p>Hemos recibido tu orden!</p>
                 <p>Te enviamos un e-mail con las intrucciones para que puedas finalizar la compra.</p>
                 
                 <p>Recuerda revisar tu bandeja de SPAM </p> 
+            </div>
+      </div>
+        `
+    }
+    if(!data.ok){
+         alert.innerHTML = `
+        <div class="container" >
+            <div class="alert alert-danger container mt-3" role="alert">
+                <p>No fue posible enviar su orden de compra, intentelo mas tarde</p> 
             </div>
       </div>
         `

@@ -19,6 +19,7 @@ const getProductosDB = async () => {
     }
 }
 
+
 const traernombreproductoDB = async () => {
     const client = await pool.connect()
     try{
@@ -43,7 +44,7 @@ const createUserDB = async (nombre,apellido,password,email) => {
     const client = await pool.connect()
     const query = {
         text: "INSERT INTO usuarios (nombre,apellido,password,email,tipo_usuario) values($1,$2,$3,$4,$5) RETURNING*",
-        values: [nombre,apellido,password,email,"administrador"]
+        values: [nombre,apellido,password,email,"cliente"]
     }
     try{
         const respuesta = await client.query(query)
@@ -202,7 +203,53 @@ const insertCompraDB = async (id,usuarioId,total) => {
     }
 }
 
+const insertDetalleDB = async (id,compraId, productoId,cantidad,precio) => {
+    const client = await pool.connect()
 
+    const query = {
+        text: "INSERT INTO detalle_compras (id,compra_id_fk,producto_id_fk,cantidad,precio) values($1,$2,$3,$4,$5) RETURNING*",
+        values: [id,compraId, productoId,cantidad,precio]
+    }
+    try{
+        const respuesta = await client.query(query)
+        return {
+            ok:true,
+            msg: respuesta.rows[0]
+        }
+    }catch(e){
+        console.log(e)
+        return {
+            ok:false,
+            msg: error.message ,
+        }
+    }finally{
+        client.release()
+    }
+}
+
+const stockProductoDB = async (stock,id) => {
+    const client = await pool.connect()
+
+    const query = {
+        text: "UPDATE productos SET stock= $1 WHERE id = $2 RETURNING*;",
+        values: [stock,id]
+    }
+    try{
+        const respuesta = await client.query(query)
+        return {
+            ok:true,
+            msg: respuesta.rows[0]
+        }
+    }catch(e){
+        console.log(e)
+        return {
+            ok:false,
+            msg: error.message ,
+        }
+    }finally{
+        client.release()
+    }
+}
 
 
 module.exports = {
@@ -214,5 +261,8 @@ module.exports = {
     crearProductoDB,
     eliminarProductoDB,
     editarProductoDB,
-    insertCompraDB
+    insertCompraDB,
+    insertDetalleDB,
+    stockProductoDB
+
 }

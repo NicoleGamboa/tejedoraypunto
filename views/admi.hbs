@@ -1,134 +1,119 @@
-<div id="AgregarCurso py-5">
-      <div id="info">
-          <h2 class="pt-5">Agregar Producto</h2>
+<div id="AgregarCurso">
+    <div id="info">
+      <h2 class="pt-5">Agregar Productos</h2>
+       <hr class="w-100" />
       <hr class="w-100" />
-      <hr class="w-100" />
-      <form id="crearProducto">
-        <div class="container pt-3 w-50">
-          <div>
-            <div class="form-group row">
-              <label  class="col-sm-2 col-form-label">Producto</label>
-              <div class="col-sm-10">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="nombre"
-                  name="producto"
-                />
-              </div>
-            </div>
-
-
-             {{!-- <div class="form-group row">
-            <label class="col-sm-2 col-form-label" >Imagen</label>
+    
+      <div class="container pt-5 w-50">
+        <div>
+          <div class="form-group row">
+            <label for="name" class="col-sm-2 col-form-label">Nombre</label>
             <div class="col-sm-10">
-              <input  class="form-control" type="file" name="foto"/>
+              <input
+                type="text"
+                class="form-control"
+                id="nombre"
+                value="Chaleco Nube"
+              />
             </div>
-          </div> --}}
-
-
-            <div class="form-group row">
-              <label  class="col-sm-2 col-form-label">Descripcion</label>
-              <div class="col-sm-10">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="descripcion"
-                  name="descripcion"
-                />
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label">Stock</label>
-              <div class="col-sm-10">
-                <input
-                  type="number"
-                  class="form-control"
-                  id="stock"
-                  name="stock"
-                />
-              </div>
-            </div>
-            <div class="form-group row">
-              <label  class="col-sm-2 col-form-label">Valor</label>
-              <div class="col-sm-10">
-                <input
-                  type="number"
-                  class="form-control"
-                  id="valor"
-                  name="valor"
-                />
-              </div>
-            </div>
-  
-            <button
-            type="submit"
-              id="agregar"
-              class="my-2 btn btn-success"
-            >
-              Agregar
-            </button>
-            <button
-              onclick="editarCurso()"
-              id="editar"
-              class="my-2 btn btn-info"
-            >
-              Editar
-            </button>
           </div>
+          <div class="form-group row">
+            <label for="descripcion" class="col-sm-2 col-form-label"
+              >Descripcion</label
+            >
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                id="descripcion"
+                value="tejido"
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="stock" class="col-sm-2 col-form-label"
+              >Stock</label
+            >
+            <div class="col-sm-10">
+              <input
+                type="number"
+                class="form-control"
+                id="stock"
+                value="1"
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="valor" class="col-sm-2 col-form-label">Valor</label>
+            <div class="col-sm-10">
+              <input
+                type="number"
+                class="form-control"
+                id="valor"
+                value="10000"
+              />
+            </div>
+          </div>
+
+          <button
+            onclick="nuevoCurso()"
+            id="agregar"
+            class="m-auto btn btn-success"
+          >
+            Agregar
+          </button>
+          <button
+            onclick="editarProducto()"
+            id="editar"
+            class="m-auto btn btn-info"
+          >
+            Editar
+          </button>
         </div>
-      </form>
-
-
+      </div>
    
     <div id="ListaCursos">
       <hr />
-       <p id="alert" ></p>
+      <p id="alert"></p>
       <hr />
-      <h2>Tabla de productos</h2>
+      <h2>Tabla de Cursos</h2>
 
-     
-
-      <div class="container">
-       <div class="row" >
-          <div class="col-12">
-                  <table class="table">
-          <thead class="thead-dark">
-            <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Descripcion</th>
-              <th scope="col">Stock</th>
-              <th scope="col">Valor</th>
-              <th scope="col">-</th>
-            </tr>
-          </thead>
-          <tbody id="cuerpo"></tbody>
-        </table>
+      <div class="container pt-5 w-75">
+        <div class="row">
+            <div class="col-md-12  col-sm-10 ">
+                <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Nivel Técnico</th>
+                    <th scope="col">Fecha de Inicio</th>
+                    <th scope="col">Duración</th>
+                    <th scope="col">-</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo"></tbody>
+                </table>
+            </div>
         </div>
-       </div>
       </div>
-      </div>      
+
     </div>
      </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-  <style>
-  body {
-    text-align: center;
-  }
-</style>
+    </div>
 
 <script>
-
+ 
+  const info = document.getElementById("info")
   let tbody = document.getElementById("cuerpo");
+  let producto = document.getElementById("nombre");
   let descripcion = document.getElementById("descripcion");
   let stock = document.getElementById("stock");
   let valor = document.getElementById("valor");
-  let form = document.getElementById("crearProducto")
-  const alert = document.getElementById("alert")
-  const info = document.getElementById("info")
+  const alert = document.getElementById("alert");
 
+
+//validacion de usuarios 
 document.addEventListener("DOMContentLoaded", () => {
   if(!localStorage.getItem('token')){
       return  info.innerHTML = `
@@ -139,12 +124,12 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
         validacion()
-  });//document DOMJHFJ
+  });//document 
 
 const validacion = async() => {
   try{
     const res = await fetch("/api/administacion", {
-      method : 'get',
+        method:'get',
       headers : {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -176,13 +161,13 @@ const getData = async() => {
     })
     .then((data) => {
       productos = data.data.msg;
-      //console.log(productos)
-    
+     // console.log(productos);
+      //pintar tabla de productos con info de database
       tbody.innerHTML = "";
       productos.forEach((c, i) => {
-      //  
-        tbody.innerHTML += `
+        tbody.innerHTML +=  `
         <tr>
+          <td>${i + 1}</td>
           <td>${c.producto}</td>
           <td>${c.descripcion}</td>
           <td>${c.stock}</td>
@@ -195,30 +180,32 @@ const getData = async() => {
       `;
       });
     });
-
+    producto.value = "";
+    descripcion.value = "";
+    stock.value = "";
+    valor.value = "";
   }
- 
-form.addEventListener("submit", async(e) => {
-  e.preventDefault()
-  const dataForm = new FormData(form)
-  const data = Object.fromEntries(dataForm); 
-  const obj = JSON.stringify(data)
-  console.log(data)
 
-  try{
-            const res = await fetch('/api/agregarProducto', {
-                method: 'post',
-                body: obj,
-                headers:{
-                    'Content-Type': 'application/json'
-                }
-          })
-        const data = await res.json()
-         console.log(data)
-        if(!data.ok){
+
+
+const nuevoCurso = () => {
+    producto;
+    descripcion;
+    stock;
+    valor;
+    let data = {
+      producto: producto.value,
+      descripcion: descripcion.value,
+      stock: stock.value,
+      valor: valor.value,
+    };
+    //console.log(data);
+    axios.post("/api/agregarProducto", data)
+    .then((data) =>{
+         if(data.data.ok){
           alert.innerHTML = `
-           <div class="alert alert-warning container" role="alert">
-            ${data.msg}
+           <div class="alert alert-success container" role="alert">
+            <p>Se agrego un producto a la lista</p>
       </div>
           `
           setTimeout(function(){
@@ -226,19 +213,28 @@ form.addEventListener("submit", async(e) => {
             },5000);
         }
           getData()
-  }catch(error){
-    console.log(error)
-    
+    }) 
+     .catch((error) =>{
+       if(!error.response.data.ok){
+          alert.innerHTML = `
+           <div class="alert alert-danger container" role="alert">
+            ${error.response.data.msg}
+      </div>
+          `
+          setTimeout(function(){
+         alert.innerHTML = "";
+            },5000);
+        }
+          getData()
+
+  });
   }
-
-}) 
-
-
-  const eliminarProducto = (i, id) => {
+ 
+const eliminarProducto = (i, id)  => {
     const nombre = productos[i].producto
-    axios.delete("/api/eliminarProducto/" + id)
+    axios.delete("/api/eliminarProducto/"+ id)
     .then(() => {
-        alert.innerHTML = `
+       alert.innerHTML = `
       <div class="alert alert-danger container" role="alert">
        ${nombre} ya fue eliminado
       </div>
@@ -250,21 +246,59 @@ form.addEventListener("submit", async(e) => {
     });
   }
 
-
-
 const prepararProducto = (i, id) => {
-    const elemento = productos[i]
-//crear value para los input
+    console.log(productos);
+    producto.value = productos[i].producto;
+    descripcion.value = productos[i].descripcion;
+    stock.value = productos[i].stock;
+    valor.value = productos[i].valor;
     document
       .getElementById("editar")
-      .setAttribute("onclick", `editarCurso('${id}')`);
+      .setAttribute("onclick", `editarProducto('${id}')`);
     document.getElementById("agregar").style.display = "none";
     document.getElementById("editar").style.display = "block";
   }
+  
+const editarProducto= (id) => {
+    axios
+      .put("/api/editar", {
+        id: id,
+        producto: producto.value,
+        descripcion: descripcion.value,
+        stock: stock.value,
+        valor: valor.value,
+      })
+      .then((data) => {
+          console.log(data.data)
+        document.getElementById("agregar").style.display = "block";
+        document.getElementById("editar").style.display = "none";
+        if(data.data.ok){
+          alert.innerHTML = `
+           <div class="alert alert-success container" role="alert">
+            <p>El producto ya fue editado </p>
+      </div>
+          `
+          setTimeout(function(){
+         alert.innerHTML = "";
+            },5000);
+        getData();
+        }
+      })
+        .catch((error) =>{
+       if(!error.response.data.ok){
+          alert.innerHTML = `
+           <div class="alert alert-danger container" role="alert">
+            ${error.response.data.msg}
+      </div>
+          `
+          setTimeout(function(){
+         alert.innerHTML = "";
+            },5000);
+        }
+          getData()
 
-
-
-//crear funcion editar curso 
+  });
+  }
 
 
 </script>

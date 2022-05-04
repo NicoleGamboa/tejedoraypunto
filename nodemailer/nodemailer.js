@@ -6,13 +6,13 @@ const enviar = async (to,subject,html) =>{
     let transporter = nodemailer.createTransport({
         service: 'outlook',
         auth: {
-          user: 'tejedoraypunto@hotmail.com',
+          user: 'tejedoraypunto@outlook.com',
           pass: process.env.OTRO_SECRET,
         }
     })
 
     const mailOptions ={
-        from: 'tejedoraypunto@hotmail.com',
+        from: 'tejedoraypunto@outlook.com',
         to,
         subject,
         html,

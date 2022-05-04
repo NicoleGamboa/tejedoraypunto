@@ -11,14 +11,30 @@
       <div class="navbar-nav">
         <a class="nav-link active" aria-current="page" href="/">Inicio</a>
         <a class="nav-link active" href="/productos">Productos Disponibles</a>
-        <a class="nav-link active" href="/login">Iniciar sesion</a>
-        <a class="nav-link active" href="/admi">Administracion</a>
+        <a id="inicioSesion"></a>
       </div>
     </div> 
       <div class="">
-        <img src="img/464-4646442_carrito-de-compras-carro-de-compras-blanco-clipart.png" width="10%" height="10%"  alt="" data-bs-toggle="modal" data-bs-target="#modalUno" type="button" class="text-sm-end">
+        <img src="img/464-4646442_carrito-de-compras-carro-de-compras-blanco-clipart.png" width="5%" height="5%"  alt="" data-bs-toggle="modal" data-bs-target="#modalUno" type="button" class="text-sm-end">
       </div>
   </div>
 </nav>
+
+
+<script>
+
+  const inicioSesion = document.getElementById("inicioSesion");
+
+  if(!localStorage.getItem("token")){
+    inicioSesion.innerHTML = `
+          <a class="nav-link active" href="/login">Iniciar sesion</a>
+    `
+  }
+  if(localStorage.getItem("token")){
+    inicioSesion.innerHTML = "";
+  }
+
+
+</script>
 
 

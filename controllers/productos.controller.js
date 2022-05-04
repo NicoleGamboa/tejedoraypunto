@@ -29,26 +29,12 @@ const traerNombreP = async(req,res) => {
 
 const crearProducto = async(req,res) => {
     const {producto,descripcion,stock,valor} = req.body;
-    // const {foto} = req.files;
-    // console.log(req.files)
-    // const mimetypes = ["image/jpeg", "image/png"]
     try {
         // validacion de campos
         if(!producto?.trim() || !descripcion?.trim() ||
         !stock?.trim() || !valor?.trim()){
             throw new Error("Todos los campos son obligatorios")
         }
-        // if(!mimetypes.includes(foto.mimetype)){
-        //     throw new Error("Debes seleccionar solo archivos jpeg o png")
-        // }
-        // // crear path para foto y guardarla en servidor 
-        // const pathFoto = `${nanoid()}.${foto.mimetype.split("/")[1]}`
-        // const rutaFoto = path.join(__dirname,"../public/img",pathFoto) //path.join para unir e interpretar ruta 
-        
-        // foto.mv(rutaFoto , (err) =>{
-        //     if(err) throw new Error("Error al cargar la imagen")
-            
-        // })
 
         const respuesta = await crearProductoDB(producto,descripcion,stock,valor)
         if(!respuesta.ok) throw new Error(respuesta.msg);
@@ -84,7 +70,7 @@ const eliminarProducto = async(req,res) => {
 }
 
 const editarProducto = async(req,res) => {
-    const {producto,descripcion,stock,valor} = req.body;
+    const {producto,descripcion,stock,valor, id} = req.body;
     console.log(req.body)
     try {
         // validacion de campos
@@ -93,7 +79,7 @@ const editarProducto = async(req,res) => {
             throw new Error("Todos los campos son obligatorios")
         }
 
-        const respuesta = await editarProductoDB(producto,descripcion,stock,valor)
+        const respuesta = await editarProductoDB(producto,descripcion,stock,valor,id)
         return res.json({
             ok:true,
             msg:respuesta.msg
@@ -106,6 +92,11 @@ const editarProducto = async(req,res) => {
         })
     }
 }
+
+
+
+
+
 
 module.exports = {
     getProductos,

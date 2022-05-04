@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const {v4 : uuidv4} = require ("uuid"); 
 
-const { createUserDB, getUserMailDB,getUserDB, insertCompraDB} = require("../database/db")
+const { createUserDB, getUserMailDB,getUserDB, insertCompraDB, insertDetalleDB, stockProductoDB} = require("../database/db")
 
 const enviar = require("../nodemailer/nodemailer")
 
@@ -153,37 +153,40 @@ const infoUsuario = async (req,res) => {
 // id aleatorio 
 
 const ordenCompra = async (req,res) => {
-    const idcompras = uuidv4().slice(0,6)
     const carritoParse = JSON.parse(req.body[0])
     const usuarioParse = JSON.parse(req.body[1])
     const valorTotal  = Object.values(carritoParse).reduce((acc,{cantidad, valor}) => acc + cantidad * valor,0)
 
     try {
+
+       const compra = await insertCompraDB(uuidv4().slice(0,6), usuarioParse.id,valorTotal)
         
-         await insertCompraDB(idcompras, usuarioParse.id,valorTotal)
+        Object.values(carritoParse).forEach(async(elemento) => {
+            const nuevoStock = elemento.stock - elemento.cantidad
+            await insertDetalleDB(uuidv4().slice(0,6),compra.msg.id,elemento.id,elemento.cantidad,elemento.valor ) 
+            await stockProductoDB(nuevoStock,elemento.id)
+        });
 
 
         const subject = `Bienvenido a Tejedora y Punto `
         const html = `
-        <h5>Hola ${usuarioParse.nombre} ${usuarioParse.apellido}</h5>
-        <p>Hemos recibido correctamente tu pedido </p>
-        <p>Este es el ID de tu compra: ${idcompras}</p>
-        <p>Este es el TOTAL de tu compra: ${valorTotal}</p>
+        <h4>Hola ${usuarioParse.nombre} ${usuarioParse.apellido}</h4>
+        <h5>Hemos recibido correctamente tu pedido </h5>
+        <h5>Este es el ID de tu compra: ${compra.msg.id}</h5>
+        <h5>Este es el TOTAL de tu compra: $${valorTotal}</h5>
 
+        <h5>Para finalizar tu compra, te dejamos los datos de transferencia para que hagas el pago de tu pedido a la siguientes cuenta:</h5>
         
-        <p>Para finalizar tu compra, te dejamos los datos de transferencia para que hagas el pago de tu pedido a la siguientes cuenta</p>
+        <h5>Una vez realizada la transferencia, debes enviar tu comprobante de pago al correo tejedoraypunto@hotmail.com y en el asunto indicar el ID de tu compra para 
+        validar el pago y gestionar a la brevedad la entrega de tu/tus productos </h5>
+
+        <h5>Agredecemos tu preferencia</h5>
         
-        
-        <p>Una vez realizada la transferencia, debes enviar tu comprobante de pago al correo tejedoraypunto@hotmail.com y en el asunto indicar el ID de tu compra para 
-        validar el pago y gestion a la brevedad la entrega de tu/tus productos </p>
-        <br>
-        <p>Agredecemos tu preferencia</p>
-        
-        <h5>Atte:</5>
-        <h5>Equipo Tejedora y Punto </h5>
+        <h4>Atte:</h4>
+        <h4>Equipo Tejedora y Punto </h4>
         `
 
-         const correo = await enviar(usuarioParse.email,subject,html)
+        const correo = await enviar(usuarioParse.email,subject,html)
         if(!correo.ok) console.log(correo.msg)
         if(correo.ok) console.log(correo.msg)
        
